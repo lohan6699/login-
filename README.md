@@ -500,3 +500,80 @@ if (currentBrawler === 0) { // Shelly Spread
         });
     }
 }
+function shoot(isSuper = false) {
+  const b = brawlers[currentBrawler];
+  const now = Date.now();
+  
+  // Custom cooldowns (Colt fires faster, Bull slower)
+  const cooldown = currentBrawler === 1 ? 180 : (currentBrawler === 2 ? 400 : 220);
+  if (!isSuper && now - lastShot < cooldown) return;
+  lastShot = now;
+
+  const dx = mouseX - player.x;
+  const dy = mouseY - player.y;
+  const angle = Math.atan2(dy, dx);
+  const dist = Math.hypot(dx, dy) || 1;
+
+  if (isSuper) {
+    handleSuper(b, dx, dy, angle, dist);
+  } else {
+    handleNormalAttack(b, dx, dy, angle);
+  }
+}
+
+function handleNormalAttack(b, dx, dy, angle) {
+  if (currentBrawler === 0) { // Shelly: 5-bullet Spread
+    for (let i = -2; i <= 2; i++) {
+      const sAngle = angle + (i * 0.15);
+      createBullet(player.x, player.y, sAngle, 11, 25, b.damage / 1.5, '#ffff00');
+    }
+  } 
+  else if (currentBrawler === 1) { // Colt: Straight Accurate Shot
+    createBullet(player.x, player.y, angle, 14, 60, b.damage, '#ffff00');
+  } 
+  else if (currentBrawler === 2) { // Bull: Heavy 3-bullet Spread (Short Range)
+    for (let i = -1; i <= 1; i++) {
+      const sAngle = angle + (i * 0.2);
+      createBullet(player.x, player.y, sAngle, 10, 15, b.damage, '#ffcc00');
+    }
+  }
+}
+
+function handleSuper(b, dx, dy, angle, dist) {
+  superCharge = 0; 
+  isSuperReady = false;
+  superFill.style.width = '0%';
+  superText.style.opacity = '0';
+
+  if (currentBrawler === 0) { // Shelly Super: Massive Spread + Knockback feel
+    for (let i = -4; i <= 4; i++) {
+      const sAngle = angle + (i * 0.2);
+      createBullet(player.x, player.y, sAngle, 15, 35, b.superDamage, '#00ffff', true);
+    }
+  } 
+  else if (currentBrawler === 1) { // Colt Super: Mega Bullet
+    createBullet(player.x, player.y, angle, 18, 100, b.superDamage * 2, '#00ffff', true);
+  }
+  else if (currentBrawler === 2) { // Bull Super: Dash
+    const dashSpeed = 25;
+    player.x += (dx / dist) * 150; // Instant boost forward
+    player.y += (dy / dist) * 150;
+    createExplosion(player.x, player.y, '#ff0000', 40);
+  }
+  
+  createExplosion(player.x, player.y, '#00ffff', 40);
+}
+
+// Helper to clean up bullet creation code
+function createBullet(x, y, ang, speed, life, dmg, color, isSuper = false) {
+  bullets.push({
+    x: x, y: y,
+    vx: Math.cos(ang) * speed,
+    vy: Math.sin(ang) * speed,
+    size: isSuper ? 12 : 6,
+    life: life,
+    damage: dmg,
+    color: color,
+    isSuper: isSuper
+  });
+}
