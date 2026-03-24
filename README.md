@@ -478,3 +478,25 @@
   </script>
 </body>
 </html>
+function spawnEnemy() {
+  const side = Math.floor(Math.random() * 4); // 0: Top, 1: Right, 2: Bottom, 3: Left
+  let x, y;
+  if (side === 0) { x = Math.random() * canvas.width; y = -30; }
+  else if (side === 1) { x = canvas.width + 30; y = Math.random() * canvas.height; }
+  else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + 30; }
+  else { x = -30; y = Math.random() * canvas.height; }
+  
+  enemies.push({ x, y, size: 24, speed: 1.65, color: '#ff4444', health: 65 });
+}
+if (currentBrawler === 0) { // Shelly Spread
+    for (let i = -2; i <= 2; i++) {
+        const spreadAngle = Math.atan2(dy, dx) + (i * 0.2);
+        bullets.push({
+            x: player.x, y: player.y,
+            vx: Math.cos(spreadAngle) * 10,
+            vy: Math.sin(spreadAngle) * 10,
+            size: 6, life: 30, // Short range
+            damage: b.damage / 2, color: '#ffff00'
+        });
+    }
+}
