@@ -1,101 +1,125 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Mini Ninja CSS</title>
-    <style>
-        :root {
-            --ninja-red: #d32f2f;
-            --ninja-black: #1a1a1a;
-            --ninja-skin: #ffe0b2;
-        }
+<style>
+    :root {
+        --ninja-red: #d32f2f;
+        --ninja-dark-red: #b71c1c;
+        --ninja-black: #1a1a1a;
+        --ninja-skin: #ffe0b2;
+    }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #e0e0e0;
+        margin: 0;
+    }
 
-        .ninja {
-            position: relative;
-            width: 100px;
-            height: 150px;
-        }
+    /* Container com animação de respiração */
+    .ninja {
+        position: relative;
+        width: 100px;
+        height: 160px;
+        animation: breath 3s ease-in-out infinite;
+    }
 
-        /* Cabeça e Capuz */
-        .head {
-            position: absolute;
-            width: 80px;
-            height: 70px;
-            background-color: var(--ninja-red);
-            border-radius: 15px;
-            left: 10px;
-            z-index: 2;
-        }
+    /* Sombra no chão */
+    .ninja::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 10%;
+        width: 80%;
+        height: 10px;
+        background: rgba(0,0,0,0.1);
+        border-radius: 50%;
+    }
 
-        /* Abertura da Máscara (Rosto) */
-        .face-slot {
-            position: absolute;
-            width: 60px;
-            height: 20px;
-            background-color: var(--ninja-skin);
-            top: 20px;
-            left: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-        }
+    .head {
+        position: absolute;
+        width: 80px;
+        height: 75px;
+        background-color: var(--ninja-red);
+        border-radius: 20px;
+        left: 10px;
+        z-index: 3;
+        box-shadow: inset -5px -5px 0 var(--ninja-dark-red);
+    }
 
-        /* Olhos */
-        .eyes {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background-color: black;
-            border-radius: 50%;
-            top: 6px;
-            box-shadow: 35px 0 0 black; /* Segundo olho */
-            left: 10px;
-        }
+    .face-slot {
+        position: absolute;
+        width: 55px;
+        height: 22px;
+        background-color: var(--ninja-skin);
+        top: 22px;
+        left: 12.5px;
+        border-radius: 5px;
+        box-shadow: inset 2px 2px 0 rgba(0,0,0,0.1);
+    }
 
-        /* Corpo (Tronco) */
-        .body {
-            position: absolute;
-            width: 90px;
-            height: 80px;
-            background-color: var(--ninja-red);
-            top: 75px;
-            left: 5px;
-            border-radius: 10px 10px 5px 5px;
-            border-bottom: 10px solid var(--ninja-black); /* Cinto */
-        }
+    .eyes {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background-color: var(--ninja-black);
+        border-radius: 50%;
+        top: 7px;
+        left: 10px;
+        box-shadow: 27px 0 0 var(--ninja-black);
+    }
 
-        /* Detalhe da roupa (O "V") */
-        .detail {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid var(--ninja-black);
-            left: 25px;
-            opacity: 0.3;
-        }
-    </style>
-</head>
-<body>
+    .body {
+        position: absolute;
+        width: 85px;
+        height: 70px;
+        background-color: var(--ninja-red);
+        top: 70px;
+        left: 7.5px;
+        border-radius: 10px 10px 5px 5px;
+        border-bottom: 12px solid var(--ninja-black); /* Cinto */
+        z-index: 2;
+    }
 
-    <div class="ninja">
-        <div class="head">
-            <div class="face-slot">
-                <div class="eyes"></div>
-            </div>
-        </div>
-        <div class="body">
-            <div class="detail"></div>
+    /* Braços */
+    .arm {
+        position: absolute;
+        width: 20px;
+        height: 50px;
+        background-color: var(--ninja-red);
+        top: 75px;
+        border-radius: 10px;
+        z-index: 1;
+    }
+    .arm.left { left: -5px; transform: rotate(15deg); }
+    .arm.right { right: -5px; transform: rotate(-15deg); }
+
+    /* Pernas */
+    .leg {
+        position: absolute;
+        width: 25px;
+        height: 30px;
+        background-color: var(--ninja-black);
+        bottom: -20px;
+        border-radius: 0 0 5px 5px;
+    }
+    .leg.left { left: 15px; }
+    .leg.right { right: 15px; }
+
+    @keyframes breath {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+</style>
+
+<div class="ninja">
+    <div class="head">
+        <div class="face-slot">
+            <div class="eyes"></div>
         </div>
     </div>
-
-</body>
-</html>
+    <div class="arm left"></div>
+    <div class="arm right"></div>
+    <div class="body"></div>
+    <div class="leg left"></div>
+    <div class="leg right"></div>
+</div>
