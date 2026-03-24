@@ -1,352 +1,291 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cadastro de Clientes</title>
-  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Brawl Stars Mini</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: #1f2937;
+    body { margin:0; background:#111; overflow:hidden; touch-action:none; }
+    canvas { display:block; margin:0 auto; background:#2a5; }
+    #joystick {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: none;
     }
-    .container {
-      background: white;
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.18);
-      overflow: hidden;
+    #fire {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 80px;
+      height: 80px;
+      background: rgba(255,0,0,0.4);
+      border-radius: 50%;
+      display: none;
     }
-    .tabs {
-      display: flex;
-      background: #f3f4f6;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .tab {
-      flex: 1;
-      padding: 16px;
-      text-align: center;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: #4b5563;
-    }
-    .tab.active {
-      background: white;
-      color: #4f46e5;
-      border-bottom: 3px solid #4f46e5;
-    }
-    .tab-content {
-      padding: 28px;
-      min-height: 420px;
-    }
-    .tab-content.hidden { display: none; }
-
-    /* Form styles */
-    .form-group { margin-bottom: 24px; }
-    label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.95rem; color: #374151; }
-    input, select {
-      width: 100%; padding: 14px 16px; border: 1px solid #d1d5db; border-radius: 10px;
-      font-size: 1rem; transition: all 0.2s;
-    }
-    input:focus, select:focus {
-      outline: none; border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.12);
-    }
-    .error { color: #dc2626; font-size: 0.84rem; margin-top: 6px; min-height: 1.2em; }
-    button {
-      width: 100%; padding: 16px; background: #4f46e5; color: white; border: none;
-      border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 16px;
-      transition: all 0.25s;
-    }
-    button:hover:not(:disabled) { background: #4338ca; transform: translateY(-2px); }
-    button:disabled { background: #9ca3af; cursor: not-allowed; }
-
-    .success-msg, .error-msg {
-      padding: 16px; margin: 20px 0; border-radius: 10px; text-align: center; font-weight: 500;
-    }
-    .success-msg { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-    .error-msg   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 520px) { .row { grid-template-columns: 1fr; gap: 24px; } }
-
-    /* Lista de clientes */
-    .client-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .client-list { display: flex; flex-direction: column; gap: 16px; }
-    .client-card {
-      background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px;
-      padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      position: relative;
-    }
-    .client-card h3 { margin: 0 0 12px; color: #1f2937; font-size: 1.15rem; }
-    .client-info { font-size: 0.95rem; color: #4b5563; line-height: 1.6; }
-    .client-info strong { color: #374151; }
-    .delete-btn {
-      position: absolute; top: 16px; right: 16px;
-      background: #ef4444; color: white; border: none;
-      border-radius: 6px; padding: 6px 12px; font-size: 0.85rem;
-      cursor: pointer; transition: background 0.2s;
-    }
-    .delete-btn:hover { background: #dc2626; }
-    .no-clients { text-align: center; color: #6b7280; padding: 80px 20px; font-size: 1.1rem; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="tabs">
-      <div class="tab active" data-tab="cadastro">Novo Cadastro</div>
-      <div class="tab" data-tab="lista">Clientes Cadastrados</div>
-    </div>
+  <canvas id="game"></canvas>
 
-    <div class="tab-content" id="cadastro">
-      <form id="cadastro-form" novalidate>
-        <!-- Campos do formulário (mantidos iguais à versão anterior) -->
-        <div class="form-group">
-          <label for="nome">Nome completo *</label>
-          <input type="text" id="nome" required minlength="3" placeholder="Ex: João Silva Santos">
-          <span class="error" id="erro-nome"></span>
-        </div>
-
-        <div class="row">
-          <div class="form-group">
-            <label for="cpf">CPF *</label>
-            <input type="text" id="cpf" required placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
-            <span class="error" id="erro-cpf"></span>
-          </div>
-          <div class="form-group">
-            <label for="nascimento">Data de nascimento *</label>
-            <input type="date" id="nascimento" required>
-            <span class="error" id="erro-nascimento"></span>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="email">E-mail *</label>
-          <input type="email" id="email" required placeholder="seuemail@exemplo.com">
-          <span class="error" id="erro-email"></span>
-        </div>
-
-        <div class="row">
-          <div class="form-group">
-            <label for="telefone">Telefone/WhatsApp *</label>
-            <input type="tel" id="telefone" required placeholder="(41) 99999-9999" maxlength="15" inputmode="numeric">
-            <span class="error" id="erro-telefone"></span>
-          </div>
-          <div class="form-group">
-            <label>Gênero</label>
-            <div style="display:flex; gap:24px; margin-top:10px; flex-wrap:wrap;">
-              <label><input type="radio" name="genero" value="M"> Masculino</label>
-              <label><input type="radio" name="genero" value="F"> Feminino</label>
-              <label><input type="radio" name="genero" value="O"> Outro</label>
-              <label><input type="radio" name="genero" value="N" checked> Prefiro não informar</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="estado">Estado</label>
-          <select id="estado">
-            <option value="">Selecione...</option>
-            <option value="PR" selected>Paraná</option>
-            <!-- Adicione outros estados se quiser -->
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label style="display:flex; align-items:flex-start; gap:12px; font-size:0.92rem;">
-            <input type="checkbox" id="lgpd" required>
-            <span>Concordo com a <a href="#" style="color:#4f46e5;">Política de Privacidade</a> e LGPD.</span>
-          </label>
-          <span class="error" id="erro-lgpd"></span>
-        </div>
-
-        <div id="mensagem" style="display:none;"></div>
-        <button type="submit" id="btn-submit" disabled>Cadastrar Cliente</button>
-      </form>
-    </div>
-
-    <div class="tab-content hidden" id="lista">
-      <div class="client-header">
-        <h2 style="color:#4f46e5; margin:0;">Clientes Cadastrados</h2>
-        <span id="contador" style="color:#6b7280; font-weight:500;">0 clientes</span>
-      </div>
-      <div id="client-list" class="client-list"></div>
-    </div>
-
-    <div style="text-align:center; padding:16px; color:#6b7280; font-size:0.9rem; border-top:1px solid #f3f4f6; background:#f9fafb;">
-      Sistema de Cadastro • © 2026
-    </div>
-  </div>
+  <!-- Joystick virtual (para celular) -->
+  <div id="joystick"></div>
+  <div id="fire">🔫</div>
 
   <script>
-    // Tabs
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-        document.getElementById(tab.dataset.tab).classList.remove('hidden');
-        if (tab.dataset.tab === 'lista') renderizarClientes();
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 800;
+    canvas.height = 600;
+
+    // Jogador
+    let player = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      size: 25,
+      speed: 4,
+      color: '#00f',
+      angle: 0,
+      health: 100
+    };
+
+    let bullets = [];
+    let enemies = [];
+    let keys = {};
+    let mouseX = canvas.width / 2;
+    let mouseY = canvas.height / 2;
+
+    // Controles touch
+    let joystickActive = false;
+    let joystickX = 0, joystickY = 0;
+    let joyCenterX = 0, joyCenterY = 0;
+    let firePressed = false;
+
+    // Cria inimigos
+    function spawnEnemy() {
+      enemies.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: 22,
+        speed: 1.5,
+        color: '#f00',
+        health: 50
       });
+    }
+
+    // Atira
+    function shoot() {
+      const dx = mouseX - player.x;
+      const dy = mouseY - player.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      
+      bullets.push({
+        x: player.x,
+        y: player.y,
+        vx: (dx / dist) * 10,
+        vy: (dy / dist) * 10,
+        size: 8,
+        life: 60
+      });
+    }
+
+    // Loop principal
+    function gameLoop() {
+      // Limpa tela
+      ctx.fillStyle = '#2a5';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Movimento do jogador (teclado)
+      let dx = 0, dy = 0;
+      if (keys['w'] || keys['ArrowUp']) dy -= 1;
+      if (keys['s'] || keys['ArrowDown']) dy += 1;
+      if (keys['a'] || keys['ArrowLeft']) dx -= 1;
+      if (keys['d'] || keys['ArrowRight']) dx += 1;
+
+      // Movimento pelo joystick (touch)
+      if (joystickActive) {
+        dx += joystickX;
+        dy += joystickY;
+      }
+
+      if (dx !== 0 || dy !== 0) {
+        const len = Math.sqrt(dx*dx + dy*dy);
+        player.x += (dx / len) * player.speed;
+        player.y += (dy / len) * player.speed;
+      }
+
+      // Limita jogador na tela
+      player.x = Math.max(player.size, Math.min(canvas.width - player.size, player.x));
+      player.y = Math.max(player.size, Math.min(canvas.height - player.size, player.y));
+
+      // Desenha jogador
+      ctx.save();
+      ctx.translate(player.x, player.y);
+      ctx.rotate(player.angle);
+      ctx.fillStyle = player.color;
+      ctx.fillRect(-player.size/2, -player.size/2, player.size, player.size);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(player.size/4, -5, 15, 10); // "arma"
+      ctx.restore();
+
+      // Balas
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        b.life--;
+
+        ctx.fillStyle = '#ff0';
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+        ctx.fill();
+
+        if (b.life <= 0 || b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
+          bullets.splice(i, 1);
+        }
+      }
+
+      // Inimigos
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        let e = enemies[i];
+
+        // Move inimigo na direção do jogador
+        const edx = player.x - e.x;
+        const edy = player.y - e.y;
+        const elen = Math.sqrt(edx*edx + edy*edy) || 1;
+        e.x += (edx / elen) * e.speed;
+        e.y += (edy / elen) * e.speed;
+
+        // Desenha inimigo
+        ctx.fillStyle = e.color;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.size/2, 0, Math.PI*2);
+        ctx.fill();
+
+        // Colisão com balas
+        for (let j = bullets.length - 1; j >= 0; j--) {
+          let b = bullets[j];
+          const dist = Math.hypot(b.x - e.x, b.y - e.y);
+          if (dist < e.size/2 + b.size) {
+            e.health -= 25;
+            bullets.splice(j, 1);
+          }
+        }
+
+        if (e.health <= 0) {
+          enemies.splice(i, 1);
+          continue;
+        }
+
+        // Colisão com jogador
+        const pdist = Math.hypot(player.x - e.x, player.y - e.y);
+        if (pdist < player.size/2 + e.size/2) {
+          player.health -= 0.5; // dano por segundo
+        }
+      }
+
+      // Vida do jogador
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText(`Vida: ${Math.max(0, Math.floor(player.health))}`, 20, 40);
+
+      if (player.health <= 0) {
+        ctx.fillStyle = 'rgba(0,0,0,0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'red';
+        ctx.font = '50px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
+        return;
+      }
+
+      // Gera inimigos aos poucos
+      if (Math.random() < 0.02 && enemies.length < 8) spawnEnemy();
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    // ====================== CONTROLES ======================
+
+    // Teclado
+    window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+    window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+    // Mouse / toque para mirar e atirar
+    function updateAim(x, y) {
+      mouseX = x;
+      mouseY = y;
+      player.angle = Math.atan2(y - player.y, x - player.x);
+    }
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      updateAim(e.clientX - rect.left, e.clientY - rect.top);
     });
 
-    // Máscaras
-    function mascaraCPF(el) {
-      let v = el.value.replace(/\D/g,'');
-      v = v.replace(/(\d{3})(\d)/,'$1.$2');
-      v = v.replace(/(\d{3})(\d)/,'$1.$2');
-      v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
-      el.value = v.slice(0,14);
+    canvas.addEventListener('click', () => shoot());
+
+    // Touch para celular
+    const joystickDiv = document.getElementById('joystick');
+    const fireDiv = document.getElementById('fire');
+
+    // Mostra controles touch em dispositivos móveis
+    if ('ontouchstart' in window) {
+      joystickDiv.style.display = 'block';
+      fireDiv.style.display = 'block';
     }
 
-    function mascaraTelefone(el) {
-      let v = el.value.replace(/\D/g,'');
-      if (v.length <= 10) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-      else v = v.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
-      el.value = v.slice(0,15);
-    }
-
-    document.getElementById('cpf').addEventListener('input', e => mascaraCPF(e.target));
-    document.getElementById('telefone').addEventListener('input', e => mascaraTelefone(e.target));
-
-    // Validações (resumida - pode expandir como antes)
-    function validarFormulario(mostrar = false) {
-      let valido = true;
-      const campos = [
-        {id: 'nome',      check: v => v.trim().length >= 3,      msg: 'Nome muito curto'},
-        {id: 'cpf',       check: v => validarCPF(v),             msg: 'CPF inválido'},
-        {id: 'nascimento',check: v => idadeMinima(v),            msg: 'Idade mínima 16 anos'},
-        {id: 'email',     check: v => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(v), msg: 'E-mail inválido'},
-        {id: 'telefone',  check: v => {
-          const limpo = v.replace(/\D/g,''); return limpo.length >= 10 && limpo.length <= 11;
-        }, msg: 'Telefone inválido'},
-        {id: 'lgpd',      check: el => el.checked,               msg: 'Aceite a política'}
-      ];
-
-      campos.forEach(c => {
-        const el = document.getElementById(c.id);
-        const erro = document.getElementById(`erro-${c.id}`);
-        const valor = c.id === 'lgpd' ? el : el.value;
-        const ok = typeof c.check === 'function' ? c.check(valor) : c.check(el);
-        if (mostrar) erro.textContent = ok ? '' : c.msg;
-        else erro.textContent = '';
-        if (!ok) valido = false;
-      });
-
-      document.getElementById('btn-submit').disabled = !valido;
-      return valido;
-    }
-
-    function validarCPF(cpf) {
-      cpf = cpf.replace(/\D/g,'');
-      if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-      let s = 0;
-      for (let i = 0; i < 9; i++) s += parseInt(cpf[i]) * (10 - i);
-      let r = (s * 10) % 11; if (r === 10 || r === 11) r = 0;
-      if (r !== parseInt(cpf[9])) return false;
-      s = 0;
-      for (let i = 0; i < 10; i++) s += parseInt(cpf[i]) * (11 - i);
-      r = (s * 10) % 11; if (r === 10 || r === 11) r = 0;
-      return r === parseInt(cpf[10]);
-    }
-
-    function idadeMinima(data) {
-      if (!data) return false;
-      const hoje = new Date();
-      const nasc = new Date(data);
-      let idade = hoje.getFullYear() - nasc.getFullYear();
-      const m = hoje.getMonth() - nasc.getMonth();
-      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
-      return idade >= 16;
-    }
-
-    ['input','change','blur'].forEach(e => document.getElementById('cadastro-form').addEventListener(e, () => validarFormulario(), true));
-
-    // Limite data nascimento
-    const hoje = new Date();
-    const max = new Date(hoje.getFullYear()-16, hoje.getMonth(), hoje.getDate()-1).toISOString().split('T')[0];
-    document.getElementById('nascimento').max = max;
-
-    // Cadastro
-    document.getElementById('cadastro-form').addEventListener('submit', e => {
+    // Joystick touch
+    joystickDiv.addEventListener('touchstart', e => {
       e.preventDefault();
-      if (!validarFormulario(true)) {
-        document.getElementById('mensagem').textContent = 'Corrija os erros destacados.';
-        document.getElementById('mensagem').className = 'error-msg';
-        document.getElementById('mensagem').style.display = 'block';
-        setTimeout(() => document.getElementById('mensagem').style.display = 'none', 5000);
-        return;
-      }
-
-      const cliente = {
-        nome: document.getElementById('nome').value.trim(),
-        cpf: document.getElementById('cpf').value,
-        nascimento: document.getElementById('nascimento').value,
-        email: document.getElementById('email').value.trim(),
-        telefone: document.getElementById('telefone').value,
-        genero: document.querySelector('input[name="genero"]:checked')?.value || 'N',
-        estado: document.getElementById('estado').value || 'Não informado',
-        data: new Date().toLocaleString('pt-BR')
-      };
-
-      let clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
-      clientes.push(cliente);
-      localStorage.setItem('clientes', JSON.stringify(clientes));
-
-      document.getElementById('mensagem').textContent = 'Cliente cadastrado com sucesso!';
-      document.getElementById('mensagem').className = 'success-msg';
-      document.getElementById('mensagem').style.display = 'block';
-      setTimeout(() => document.getElementById('mensagem').style.display = 'none', 5000);
-
-      document.getElementById('cadastro-form').reset();
-      validarFormulario();
+      joystickActive = true;
+      const rect = joystickDiv.getBoundingClientRect();
+      joyCenterX = rect.left + 60;
+      joyCenterY = rect.top + 60;
     });
 
-    // Renderizar lista + excluir
-    function renderizarClientes() {
-      const container = document.getElementById('client-list');
-      const contador = document.getElementById('contador');
-      let clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+    window.addEventListener('touchmove', e => {
+      if (!joystickActive) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      let dx = touch.clientX - joyCenterX;
+      let dy = touch.clientY - joyCenterY;
+      const dist = Math.min(50, Math.hypot(dx, dy));
+      const angle = Math.atan2(dy, dx);
+      joystickX = Math.cos(angle) * (dist / 50);
+      joystickY = Math.sin(angle) * (dist / 50);
+    });
 
-      contador.textContent = `${clientes.length} cliente${clientes.length !== 1 ? 's' : ''}`;
+    window.addEventListener('touchend', () => {
+      joystickActive = false;
+      joystickX = joystickY = 0;
+    });
 
-      if (clientes.length === 0) {
-        container.innerHTML = '<div class="no-clients">Nenhum cliente cadastrado ainda.</div>';
-        return;
-      }
+    // Botão de atirar
+    fireDiv.addEventListener('touchstart', e => {
+      e.preventDefault();
+      firePressed = true;
+      shoot();
+    });
+    fireDiv.addEventListener('touchend', () => firePressed = false);
 
-      container.innerHTML = clientes.map((c, index) => `
-        <div class="client-card">
-          <button class="delete-btn" onclick="excluirCliente(${index})">Excluir</button>
-          <h3>${c.nome}</h3>
-          <div class="client-info">
-            <strong>CPF:</strong> ${c.cpf}<br>
-            <strong>Nascimento:</strong> ${c.nascimento ? new Date(c.nascimento).toLocaleDateString('pt-BR') : '—'}<br>
-            <strong>E-mail:</strong> ${c.email}<br>
-            <strong>Telefone:</strong> ${c.telefone}<br>
-            <strong>Gênero:</strong> ${c.genero === 'M' ? 'Masculino' : c.genero === 'F' ? 'Feminino' : c.genero === 'O' ? 'Outro' : 'Não informado'}<br>
-            <strong>Estado:</strong> ${c.estado}<br>
-            <strong>Cadastrado em:</strong> ${c.data}
-          </div>
-        </div>
-      `).join('');
-    }
+    // Toque direto na tela também atira (opcional)
+    canvas.addEventListener('touchstart', e => {
+      const rect = canvas.getBoundingClientRect();
+      const tx = e.touches[0].clientX - rect.left;
+      const ty = e.touches[0].clientY - rect.top;
+      updateAim(tx, ty);
+      shoot();
+    });
 
-    function excluirCliente(index) {
-      if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
-      let clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
-      clientes.splice(index, 1);
-      localStorage.setItem('clientes', JSON.stringify(clientes));
-      renderizarClientes();
-    }
+    // Inicia o jogo
+    for (let i = 0; i < 3; i++) spawnEnemy();
+    gameLoop();
   </script>
-
 </body>
 </html>
