@@ -249,3 +249,22 @@ button:hover {
 button:active {
     transform: translateY(0);
 }
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-5deg); }
+  50% { transform: translateX(5px) rotate(5deg); }
+  100% { transform: translateX(0); }
+}
+
+.hit {
+  animation: shake 0.2s ease-in-out 2;
+}
+.ninja-figure.attack .katana {
+    transform: rotate(120deg); /* Swings the sword down */
+    transition: transform 0.2s;
+}
+
+.ninja-figure.attack .nunchaku {
+    transform: rotate(-60deg) scale(1.2);
+    transition: transform 0.2s;
+}
