@@ -1,125 +1,78 @@
-<style>
-    :root {
-        --ninja-red: #d32f2f;
-        --ninja-dark-red: #b71c1c;
-        --ninja-black: #1a1a1a;
-        --ninja-skin: #ffe0b2;
-    }
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninjago LEGO Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Ninjago LEGO Battle!</h1>
+        <div class="dojo-background">
+            <div class="ninja-figure green" id="ninjaGreen">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="legs"></div>
+                <div class="weapon katana"></div>
+            </div>
 
-    body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #e0e0e0;
-        margin: 0;
-    }
+            <div class="ninja-figure red" id="ninjaRed">
+                <div class="head"></div>
+                <div class="body"></div>
+                <div class="legs"></div>
+                <div class="weapon nunchaku"></div>
+            </div>
 
-    /* Container com animação de respiração */
-    .ninja {
-        position: relative;
-        width: 100px;
-        height: 160px;
-        animation: breath 3s ease-in-out infinite;
-    }
-
-    /* Sombra no chão */
-    .ninja::after {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 10%;
-        width: 80%;
-        height: 10px;
-        background: rgba(0,0,0,0.1);
-        border-radius: 50%;
-    }
-
-    .head {
-        position: absolute;
-        width: 80px;
-        height: 75px;
-        background-color: var(--ninja-red);
-        border-radius: 20px;
-        left: 10px;
-        z-index: 3;
-        box-shadow: inset -5px -5px 0 var(--ninja-dark-red);
-    }
-
-    .face-slot {
-        position: absolute;
-        width: 55px;
-        height: 22px;
-        background-color: var(--ninja-skin);
-        top: 22px;
-        left: 12.5px;
-        border-radius: 5px;
-        box-shadow: inset 2px 2px 0 rgba(0,0,0,0.1);
-    }
-
-    .eyes {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background-color: var(--ninja-black);
-        border-radius: 50%;
-        top: 7px;
-        left: 10px;
-        box-shadow: 27px 0 0 var(--ninja-black);
-    }
-
-    .body {
-        position: absolute;
-        width: 85px;
-        height: 70px;
-        background-color: var(--ninja-red);
-        top: 70px;
-        left: 7.5px;
-        border-radius: 10px 10px 5px 5px;
-        border-bottom: 12px solid var(--ninja-black); /* Cinto */
-        z-index: 2;
-    }
-
-    /* Braços */
-    .arm {
-        position: absolute;
-        width: 20px;
-        height: 50px;
-        background-color: var(--ninja-red);
-        top: 75px;
-        border-radius: 10px;
-        z-index: 1;
-    }
-    .arm.left { left: -5px; transform: rotate(15deg); }
-    .arm.right { right: -5px; transform: rotate(-15deg); }
-
-    /* Pernas */
-    .leg {
-        position: absolute;
-        width: 25px;
-        height: 30px;
-        background-color: var(--ninja-black);
-        bottom: -20px;
-        border-radius: 0 0 5px 5px;
-    }
-    .leg.left { left: 15px; }
-    .leg.right { right: 15px; }
-
-    @keyframes breath {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-    }
-</style>
-
-<div class="ninja">
-    <div class="head">
-        <div class="face-slot">
-            <div class="eyes"></div>
+            <div class="action-text" id="actionText"></div>
         </div>
+        <button onclick="resetGame()">Reiniciar Batalha</button>
     </div>
-    <div class="arm left"></div>
-    <div class="arm right"></div>
-    <div class="body"></div>
-    <div class="leg left"></div>
-    <div class="leg right"></div>
-</div>
+
+    <script>
+        const ninjaGreen = document.getElementById('ninjaGreen');
+        const ninjaRed = document.getElementById('ninjaRed');
+        const actionText = document.getElementById('actionText');
+
+        let greenTurn = true; // Controla de quem é a vez
+
+        ninjaGreen.addEventListener('click', () => {
+            if (greenTurn) {
+                ninjaGreen.classList.add('attack');
+                actionText.textContent = "Ninja Verde atacou!";
+                setTimeout(() => {
+                    ninjaGreen.classList.remove('attack');
+                    greenTurn = false;
+                    actionText.textContent = "Vez do Ninja Vermelho...";
+                }, 800);
+            } else {
+                actionText.textContent = "Espere a sua vez, Ninja Verde!";
+            }
+        });
+
+        ninjaRed.addEventListener('click', () => {
+            if (!greenTurn) {
+                ninjaRed.classList.add('attack');
+                actionText.textContent = "Ninja Vermelho contra-atacou!";
+                setTimeout(() => {
+                    ninjaRed.classList.remove('attack');
+                    greenTurn = true;
+                    actionText.textContent = "Vez do Ninja Verde...";
+                }, 800);
+            } else {
+                actionText.textContent = "Espere a sua vez, Ninja Vermelho!";
+            }
+        });
+
+        function resetGame() {
+            ninjaGreen.classList.remove('attack');
+            ninjaRed.classList.remove('attack');
+            greenTurn = true;
+            actionText.textContent = "Comece a batalha! Vez do Ninja Verde...";
+        }
+
+        // Inicializa o texto da ação
+        resetGame();
+    </script>
+</body>
+</html>
