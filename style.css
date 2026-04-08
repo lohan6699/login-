@@ -14,113 +14,119 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* Fundo em Azul Marinho Profundo com um leve gradiente para dar profundidade */
-    background: radial-gradient(circle, #001f3f 0%, #000814 100%);
+    /* Fundo Preto Sólido com um leve toque de profundidade */
+    background: #000000;
+    position: relative;
 }
 
-/* Container com efeito de Vidro (Glassmorphism) */
+/* Adicionando um brilho ciano suave no fundo para não ficar chapado */
+body::before {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: #00ffff;
+    filter: blur(150px);
+    opacity: 0.15;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+/* Container de Login */
 .login-container {
-    background: rgba(255, 255, 255, 0.05); /* Mais sutil no fundo escuro */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+    background: rgba(10, 10, 10, 0.8); /* Preto quase opaco */
+    backdrop-filter: blur(10px);
+    border: 1px solid #00ffff; /* Borda Ciano */
     padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); /* Brilho externo ciano */
     width: 100%;
     max-width: 400px;
     text-align: center;
-    color: white;
 }
 
 .login-form h2 {
-    font-size: 2.2rem;
-    font-weight: 600;
+    color: #00ffff; /* Texto Ciano */
+    font-size: 2rem;
     margin-bottom: 10px;
-    letter-spacing: 1px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .login-form p {
-    font-size: 0.9rem;
+    color: #ffffff;
+    font-size: 0.8rem;
     margin-bottom: 30px;
-    color: #8da2b3; /* Cor azulada acinzentada para combinar */
+    opacity: 0.6;
 }
 
 /* Campos de Input */
 .input-group {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .input-group i {
     position: absolute;
-    left: 18px;
+    left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: #00d4ff; /* Ícones em azul claro para destaque */
+    color: #00ffff;
 }
 
 .input-group input {
     width: 100%;
-    padding: 14px 15px 14px 50px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+    padding: 12px 15px 12px 45px;
+    background: #1a1a1a; /* Cinza bem escuro para o input */
+    border: 1px solid #333;
+    border-radius: 5px;
     outline: none;
-    color: white;
+    color: #00ffff; /* Letra ciano ao digitar */
     font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.input-group input:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: #00d4ff;
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
-}
-
-/* Botão Azul Destacado */
-.login-button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #00d4ff, #007bff);
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.4s;
-    margin-top: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.login-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
-    filter: brightness(1.1);
-}
-
-/* Links do Rodapé */
-.footer-links {
-    margin-top: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    font-size: 0.85rem;
-}
-
-.footer-links a {
-    color: #00d4ff;
-    text-decoration: none;
     transition: 0.3s;
 }
 
+.input-group input:focus {
+    border-color: #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+/* Botão Ciano Neon */
+.login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background: #00ffff;
+    color: #000; /* Texto preto no botão ciano */
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.login-button:hover {
+    background: #00cccc;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    transform: scale(1.02);
+}
+
+/* Links */
+.footer-links {
+    margin-top: 20px;
+    font-size: 0.8rem;
+}
+
+.footer-links a {
+    color: #00ffff;
+    text-decoration: none;
+    opacity: 0.8;
+}
+
 .footer-links a:hover {
-    color: white;
-    text-shadow: 0 0 5px #00d4ff;
+    opacity: 1;
+    text-decoration: underline;
 }
