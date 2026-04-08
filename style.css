@@ -14,27 +14,19 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-}
-
-/* Animação do Fundo */
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    /* Fundo em Azul Marinho Profundo com um leve gradiente para dar profundidade */
+    background: radial-gradient(circle, #001f3f 0%, #000814 100%);
 }
 
 /* Container com efeito de Vidro (Glassmorphism) */
 .login-container {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05); /* Mais sutil no fundo escuro */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     width: 100%;
     max-width: 400px;
     text-align: center;
@@ -42,15 +34,16 @@ body {
 }
 
 .login-form h2 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
 }
 
 .login-form p {
     font-size: 0.9rem;
     margin-bottom: 30px;
-    opacity: 0.8;
+    color: #8da2b3; /* Cor azulada acinzentada para combinar */
 }
 
 /* Campos de Input */
@@ -61,52 +54,55 @@ body {
 
 .input-group i {
     position: absolute;
-    left: 15px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.8);
+    color: #00d4ff; /* Ícones em azul claro para destaque */
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px 15px 12px 45px;
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 30px;
+    padding: 14px 15px 14px 50px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     outline: none;
     color: white;
     font-size: 1rem;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .input-group input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .input-group input:focus {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
 }
 
-/* Botão Estilizado */
+/* Botão Azul Destacado */
 .login-button {
     width: 100%;
-    padding: 12px;
+    padding: 14px;
     border: none;
-    border-radius: 30px;
-    background: #fff;
-    color: #e73c7e;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #00d4ff, #007bff);
+    color: white;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.4s;
     margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .login-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    background: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+    filter: brightness(1.1);
 }
 
 /* Links do Rodapé */
@@ -114,16 +110,17 @@ body {
     margin-top: 25px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     font-size: 0.85rem;
 }
 
 .footer-links a {
-    color: white;
+    color: #00d4ff;
     text-decoration: none;
-    font-weight: 600;
+    transition: 0.3s;
 }
 
 .footer-links a:hover {
-    text-decoration: underline;
+    color: white;
+    text-shadow: 0 0 5px #00d4ff;
 }
